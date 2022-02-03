@@ -158,6 +158,7 @@ GROUP BY m.FirstName, m.LastName
 HAVING COUNT(*) > 2
 
 -- 27) Display the customers and suppliers by city. The results should have the following columns
-Select ISNULL(s.City, c.City) AS City, s.CompanyName, c.ContactName, ISNULL((SELECT 'Customer' WHERE c.City IS NOT NULL), 'Supplier') AS Type
+SELECT ISNULL(s.City, c.City) AS City, ISNULL(s.CompanyName, c.CompanyName), ISNULL(s.ContactName, c.ContactName),
+	   ISNULL((SELECT 'Supplier' WHERE s.City IS NOT NULL), 'Customer') AS Type
 FROM Suppliers s FULL JOIN Customers c ON c.CompanyName = s.CompanyName
-Order By City
+ORDER BY City
