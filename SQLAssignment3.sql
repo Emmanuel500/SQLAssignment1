@@ -63,12 +63,12 @@ WHERE c.City != o.ShipCity
 
 -- 8) List 5 most popular products, their average price, and the customer city that ordered most quantity of it.
 SELECT TOP 5 p.ProductName, AVG(p.UnitPrice) AS [Average Price], (
-																 SELECT TOP 1 c.City
-																 FROM Customers c JOIN Orders o2 ON c.CustomerID = o2.CustomerID JOIN [Order Details] od2 ON o2.OrderID = od2.OrderID JOIN Products p2 ON p2.ProductID = od2.ProductID
-																 WHERE p.ProductName = p2.ProductName
-																 GROUP BY c.City, p2.ProductName
-																 ORDER BY SUM(od.Quantity) DESC
-																 ) AS [Top Customer City to order most quantity]
+	SELECT TOP 1 c.City
+	FROM Customers c JOIN Orders o2 ON c.CustomerID = o2.CustomerID JOIN [Order Details] od2 ON o2.OrderID = od2.OrderID JOIN Products p2 ON p2.ProductID = od2.ProductID
+	WHERE p.ProductName = p2.ProductName
+	GROUP BY c.City, p2.ProductName
+	ORDER BY SUM(od.Quantity) DESC
+	) AS [Top Customer City to order most quantity]
 FROM Products p JOIN [Order Details] od ON p.ProductID = od.ProductID
 GROUP BY p.ProductName
 ORDER BY SUM(od.Quantity) DESC
@@ -87,19 +87,18 @@ WHERE o.ShipCity IS NULL
 -- 10) List one city, if exists, that is the city from where the employee sold most orders (not the product quantity) is, and also the city of most total
 --	   quantity of products ordered from. (tip: join  sub-query)
 SELECT DISTINCT e.EmployeeID, (
-							  SELECT TOP 1 o2.ShipCity
-							  FROM Employees e2 JOIN Orders o2 ON e2.EmployeeID = o2.EmployeeID
-							  WHERE e.EmployeeID = e2.EmployeeID
-							  GROUP BY e2.EmployeeID, o2.ShipCity
-							  ORDER BY COUNT(o2.OrderID) DESC
-							  ) AS [Most Sold City],
-							  (
-							  SELECT TOP 1 o3.ShipCity
-							  FROM Employees e3 JOIN Orders o3 ON e3.EmployeeID = o3.EmployeeID JOIN [Order Details] od3 ON o3.OrderID = od3.OrderID
-							  WHERE e.EmployeeID = e3.EmployeeID
-							  GROUP BY e3.EmployeeID, o3.ShipCity
-							  ORDER BY SUM(od3.Quantity) DESC
-							  ) AS [Most Total Quantity City]
+	SELECT TOP 1 o2.ShipCity
+	FROM Employees e2 JOIN Orders o2 ON e2.EmployeeID = o2.EmployeeID
+	WHERE e.EmployeeID = e2.EmployeeID
+	GROUP BY e2.EmployeeID, o2.ShipCity
+	ORDER BY COUNT(o2.OrderID) DESC
+	) AS [Most Sold City], (
+	SELECT TOP 1 o3.ShipCity
+	FROM Employees e3 JOIN Orders o3 ON e3.EmployeeID = o3.EmployeeID JOIN [Order Details] od3 ON o3.OrderID = od3.OrderID
+	WHERE e.EmployeeID = e3.EmployeeID
+	GROUP BY e3.EmployeeID, o3.ShipCity
+	ORDER BY SUM(od3.Quantity) DESC
+	) AS [Most Total Quantity City]
 FROM Employees e
 ORDER By e.EmployeeID
 
